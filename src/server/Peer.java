@@ -6,8 +6,10 @@ public class Peer {
 
 	private String apelide = null;
 	private InetAddress ip = null;
+	private boolean status;
 	
 	public Peer(InetAddress inetAddress, String apelido) {
+		this.status = true;
 		this.setApelido(apelido);
 		this.setIp(inetAddress);
 	}
@@ -31,6 +33,10 @@ public class Peer {
 	@Override
 	public boolean equals(Object o) {
 		return this.apelide.equals(((Peer) o).getApelido());
+	}
+
+	public boolean getStatus() {
+		return status;
 	}
 
 }

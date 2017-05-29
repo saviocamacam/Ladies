@@ -1,6 +1,7 @@
 package server;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
@@ -16,11 +17,12 @@ public class GameManager {
 	private MulticastSocket multicastSocket;
 	private int udpPort;
 	private server.UDPListeningThread udpThread;
-	private server.MulticastListeningThread multicastThread;
 	private boolean statusGame;
 	private String apelide;
 	private LinkedList<Peer> peers = null;
 	private InetAddress privateAddress = null;
+	private byte[] messageBytes;
+	private DatagramPacket request;
 	
 	
 	public GameManager(String apelide, int multicastPort, int udpPort) {
@@ -47,9 +49,6 @@ public class GameManager {
 	public void initialize() {
 		udpThread = new UDPListeningThread(udpSocket, this);
 		udpThread.start();
-		
-		multicastThread = new MulticastListeningThread(multicastSocket, this, multicastAddress);
-		multicastThread.start();
 	}
 
 
@@ -78,8 +77,48 @@ public class GameManager {
 	}
 
 
-	public void sendFormatedMessage(int i, int j) {
+public void sendFormatedMessage(int typeMessage) {
 		
+		String formatedMessage = "";
+		
+		switch(typeMessage) {
+			case 1: 
+				formatedMessage = "JOINACK [" + apelide + "]";
+				break;
+			case 2: 
+				formatedMessage = "PLAYERS [";
+				int i;
+				LinkedList<Peer> freePlayers  = getFreePlayers();
+				for(i = 0; i < freePlayers.size()-1 ; i++) {
+					formatedMessage = formatedMessage.concat(freePlayers.get(i).getApelido() + ", ");
+				}
+				formatedMessage = formatedMessage.concat(freePlayers.get(i).getApelido());
+				formatedMessage = formatedMessage.concat("]");
+				break;
+				
+			default: formatedMessage = "Vish, deu merda aqui. Foi mal, aqui e o " + apelide;
+		}
+		
+		messageBytes = formatedMessage.getBytes();
+		
+		try { 
+			request = new DatagramPacket(messageBytes, messageBytes.length, privateAddress, udpPort);
+			udpSocket.send(request);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	private LinkedList<Peer> getFreePlayers() {
+		LinkedList<Peer> listFree = new LinkedList<>();
+		for(Peer p : peers) {
+			if(p.getStatus()) {
+				listFree.add(p);
+			}
+		}
+		return listFree;
 	}
 
 
