@@ -34,6 +34,8 @@ public class GameManager {
 
 
 	public void initialize() {
+		System.out.println("Abrindo Ladies");
+		this.statusGame = true;
 		udpThread = new UDPListeningThread(udpSocket, this);
 		udpThread.start();
 	}

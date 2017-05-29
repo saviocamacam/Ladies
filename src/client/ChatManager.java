@@ -73,7 +73,7 @@ public class ChatManager {
 			if(peers.contains(new Peer(nickname)))
 				player = nickname;
 			else{
-				System.out.print(nickname + " n„o est· na lista de players retornados!");
+				System.out.print(nickname + "n√£o est√° na sua lista");
 				return;
 			}
 			
