@@ -4,22 +4,26 @@ import java.net.InetAddress;
 
 public class Peer {
 
-	private String apelide = null;
+	private String nickname = null;
 	private InetAddress ip = null;
 	private boolean status;
 	
 	public Peer(InetAddress inetAddress, String apelido) {
 		this.status = true;
-		this.setApelido(apelido);
+		this.setNickname(apelido);
 		this.setIp(inetAddress);
 	}
 
-	public String getApelido() {
-		return apelide;
+	public Peer(String nickname) {
+		this.nickname = nickname;
 	}
 
-	public void setApelido(String apelido) {
-		this.apelide = apelido;
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 
 	public InetAddress getIp() {
@@ -32,7 +36,7 @@ public class Peer {
 	
 	@Override
 	public boolean equals(Object o) {
-		return this.apelide.equals(((Peer) o).getApelido());
+		return this.nickname.equals(((Peer) o).getNickname());
 	}
 
 	public boolean getStatus() {

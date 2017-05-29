@@ -3,6 +3,7 @@ package server;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,6 +67,60 @@ public class UDPListeningThread extends Thread {
 					this.gameManager.setPrivateAddress(request.getAddress());
 					this.gameManager.sendFormatedMessage(2);
 				}
+				
+				else if(message.matches("PLAY \\[(.+)\\]")) {
+					String namePlayers = this.gameManager.extractLocaleInformation("PLAY \\[(.+)\\]", message, 1);
+					String[] namePlayersArray = namePlayers.split("(, )");
+					
+					int index = gameManager.getPeers().indexOf(new Peer(namePlayersArray[0]));
+					Peer invitingPeer = gameManager.getPeers().get(index);
+					
+					if(gameManager.getPeers().contains(new Peer(namePlayersArray[1]))) {
+						
+						index = gameManager.getPeers().indexOf(new Peer(namePlayersArray[1]));
+						Peer invitedPeer = gameManager.getPeers().get(index);
+						
+						Match match = new Match(invitingPeer, invitedPeer);
+						
+						match.setStatus("convite");
+						
+						gameManager.getOnlineMatches().add(match);
+						gameManager.setPrivateAddress(invitedPeer.getIp());
+						gameManager.sendFormatedMessage(3);
+					} 
+					
+					else {
+						gameManager.setPrivateAddress(invitingPeer.getIp());
+						gameManager.sendFormatedMessage(4);
+					}
+					
+				}
+				
+				else if(message.matches("INVITATION RESPONSE \\[(.+)\\]")) {
+					String namePlayers = this.gameManager.extractLocaleInformation("INVITATION RESPONSE \\[(.+)\\]", message, 1);
+					String[] namePlayersArray = namePlayers.split("(, )");
+					
+					int index = gameManager.getPeers().indexOf(new Peer(namePlayersArray[0]));
+					Peer invitingPeer = gameManager.getPeers().get(index);
+					
+					index = gameManager.getPeers().indexOf(new Peer(namePlayersArray[1]));
+					Peer invitedPeer = gameManager.getPeers().get(index);
+					
+					Match match = new Match(invitingPeer, invitedPeer);
+					
+					String response = namePlayersArray[2];
+					
+					if(response.matches("ACCEPTED")) {
+						int indexMatch = gameManager.getOnlineMatches().indexOf(match);
+						gameManager.getOnlineMatches().get(indexMatch).setStatus("accepted");
+						
+					}
+					else if(response.matches("DENIED")) {
+						
+					}
+				}
+				
+				
 				
 				else {
 					System.out.println(message);

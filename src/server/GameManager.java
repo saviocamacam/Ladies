@@ -6,6 +6,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GameManager {
 	
@@ -18,12 +20,13 @@ public class GameManager {
 	private InetAddress privateAddress = null;
 	private byte[] messageBytes;
 	private DatagramPacket request;
-	
+	private LinkedList<Match> onlineMatches;
 	
 	public GameManager(String nickname, int udpPort) {
 		this.udpPort = udpPort;
 		this.nickname = nickname;
 		this.peers = new LinkedList<>();
+		this.setOnlineMatches(new LinkedList<>());
 		
 		try {
 			this.udpSocket = new DatagramSocket(udpPort);
@@ -54,13 +57,19 @@ public class GameManager {
 				int i;
 				LinkedList<Peer> freePlayers  = getFreePlayers();
 				for(i = 0; i < freePlayers.size()-1 ; i++) {
-					formatedMessage = formatedMessage.concat(freePlayers.get(i).getApelido() + ", ");
+					formatedMessage = formatedMessage.concat(freePlayers.get(i).getNickname() + ", ");
 				}
-				formatedMessage = formatedMessage.concat(freePlayers.get(i).getApelido());
+				formatedMessage = formatedMessage.concat(freePlayers.get(i).getNickname());
 				formatedMessage = formatedMessage.concat("]");
 				break;
+			case 3:
+				formatedMessage = "INVITE RECEIVED[]";
+				break;
+			case 4:
+				formatedMessage = "MATCH FAILED[]";
+				break;
 				
-			default: formatedMessage = "Vish, deu merda aqui. Foi mal, aqui e o " + nickname;
+			default: formatedMessage = "Vish, deu merda aqui. Foi mal, aqui é o " + nickname;
 		}
 		
 		messageBytes = formatedMessage.getBytes();
@@ -75,7 +84,7 @@ public class GameManager {
 	}
 
 
-	private LinkedList<Peer> getFreePlayers() {
+	public LinkedList<Peer> getFreePlayers() {
 		LinkedList<Peer> listFree = new LinkedList<>();
 		for(Peer p : peers) {
 			if(p.getStatus()) {
@@ -84,10 +93,28 @@ public class GameManager {
 		}
 		return listFree;
 	}
+	
+	
+	public String extractLocaleInformation(String regex, String message, int group) {
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(message);
+		matcher.find();
+		return matcher.group(group);
+	}
 
 
 	public void setStatusGame(boolean b) {
 		this.statusGame = b;
+	}
+
+
+	public int getUdpPort() {
+		return udpPort;
+	}
+
+
+	public void setUdpPort(int udpPort) {
+		this.udpPort = udpPort;
 	}
 
 
@@ -113,6 +140,21 @@ public class GameManager {
 
 	public void setPrivateAddress(InetAddress ip) {
 		this.privateAddress = ip;
+	}
+
+
+	public LinkedList<Match> getOnlineMatches() {
+		return onlineMatches;
+	}
+
+
+	public void setOnlineMatches(LinkedList<Match> onlineMatches) {
+		this.onlineMatches = onlineMatches;
+	}
+
+
+	public DatagramSocket getUdpSocket() {
+		return udpSocket;
 	}
 
 }

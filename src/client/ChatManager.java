@@ -77,7 +77,7 @@ public class ChatManager {
 				return;
 			}
 			
-			formatedMessage = "PLAY [" + player + "]";
+			formatedMessage = "PLAY [" + nickname +", " + player + "]";
 		}
 		
 		messageBytes = formatedMessage.getBytes();
