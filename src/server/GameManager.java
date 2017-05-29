@@ -23,6 +23,7 @@ public class GameManager {
 	public GameManager(String nickname, int udpPort) {
 		this.udpPort = udpPort;
 		this.nickname = nickname;
+		this.peers = new LinkedList<>();
 		
 		try {
 			this.udpSocket = new DatagramSocket(udpPort);

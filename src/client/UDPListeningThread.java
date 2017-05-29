@@ -31,7 +31,7 @@ public class UDPListeningThread extends Thread {
 				}
 				
 				else if(message.matches("PLAYERS \\[(.+)\\]")) {
-					String namePlayers = this.chatManager.extractLocaleInformation("FILES \\[(.+)\\]", message, 1);
+					String namePlayers = this.chatManager.extractLocaleInformation("PLAYERS \\[(.+)\\]", message, 1);
 					String[] namePlayersArray = namePlayers.split("(, )");
 					int i;
 					for(i = 0 ; i < namePlayersArray.length ; i++) {

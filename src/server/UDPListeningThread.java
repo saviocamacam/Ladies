@@ -26,6 +26,7 @@ public class UDPListeningThread extends Thread {
 		try {
 			while(gameManager.getStatusGame()) {
 				this.udpSocket.receive(request);
+				
 				message = new String(request.getData(), request.getOffset(), request.getLength());
 				
 				if (message.matches("JOIN \\[.+\\]")) {
@@ -56,7 +57,7 @@ public class UDPListeningThread extends Thread {
 				}
 				
 				else if(message.matches("GET PLAYERS \\[(.+)\\]")) {
-					Pattern pattern = Pattern.compile("LISTFILES \\[(.+)\\]");
+					Pattern pattern = Pattern.compile("GET PLAYERS \\[(.+)\\]");
 					Matcher matcher = pattern.matcher(message);
 					matcher.find();
 					
