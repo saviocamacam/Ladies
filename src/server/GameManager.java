@@ -4,43 +4,30 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.MulticastSocket;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.LinkedList;
 
 public class GameManager {
 	
-	private InetAddress multicastAddress;
-	private int multicastPort;
 	private DatagramSocket udpSocket;
-	private MulticastSocket multicastSocket;
 	private int udpPort;
 	private server.UDPListeningThread udpThread;
 	private boolean statusGame;
-	private String apelide;
+	private String nickname;
 	private LinkedList<Peer> peers = null;
 	private InetAddress privateAddress = null;
 	private byte[] messageBytes;
 	private DatagramPacket request;
 	
 	
-	public GameManager(String apelide, int multicastPort, int udpPort) {
-		this.multicastPort = multicastPort;
+	public GameManager(String nickname, int udpPort) {
 		this.udpPort = udpPort;
-		this.apelide = apelide;
+		this.nickname = nickname;
 		
 		try {
-			this.multicastAddress = InetAddress.getByName("225.1.2.3");
 			this.udpSocket = new DatagramSocket(udpPort);
-			multicastSocket = new MulticastSocket(multicastPort);
-			multicastSocket.setLoopbackMode(false);
 			
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
 		} catch (SocketException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -50,40 +37,14 @@ public class GameManager {
 		udpThread = new UDPListeningThread(udpSocket, this);
 		udpThread.start();
 	}
-
-
-	public void setStatusGame(boolean b) {
-		this.statusGame = b;
-	}
-
-
-	public boolean getStatusGame() {
-		return this.statusGame;
-	}
-
-
-	public LinkedList<Peer> getPeers() {
-		return peers;
-	}
-
-
-	public String getApelide() {
-		return apelide;
-	}
-
-
-	public void setApelide(String apelide) {
-		this.apelide = apelide;
-	}
-
-
-public void sendFormatedMessage(int typeMessage) {
+	
+	public void sendFormatedMessage(int typeMessage) {
 		
 		String formatedMessage = "";
 		
 		switch(typeMessage) {
 			case 1: 
-				formatedMessage = "JOINACK [" + apelide + "]";
+				formatedMessage = "JOINACK [" + nickname + "]";
 				break;
 			case 2: 
 				formatedMessage = "PLAYERS [";
@@ -96,7 +57,7 @@ public void sendFormatedMessage(int typeMessage) {
 				formatedMessage = formatedMessage.concat("]");
 				break;
 				
-			default: formatedMessage = "Vish, deu merda aqui. Foi mal, aqui e o " + apelide;
+			default: formatedMessage = "Vish, deu merda aqui. Foi mal, aqui e o " + nickname;
 		}
 		
 		messageBytes = formatedMessage.getBytes();
@@ -119,6 +80,31 @@ public void sendFormatedMessage(int typeMessage) {
 			}
 		}
 		return listFree;
+	}
+
+
+	public void setStatusGame(boolean b) {
+		this.statusGame = b;
+	}
+
+
+	public boolean getStatusGame() {
+		return this.statusGame;
+	}
+
+
+	public LinkedList<Peer> getPeers() {
+		return peers;
+	}
+
+
+	public String getNickname() {
+		return nickname;
+	}
+
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 
 

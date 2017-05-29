@@ -36,12 +36,12 @@ public class UDPListeningThread extends Thread {
 					String apelide = matcher.group(1);
 					Peer peer = new Peer(request.getAddress(), apelide);
 					
-					if(!gameManager.getPeers().contains(peer) && !peer.getApelido().equals(gameManager.getApelide())) {
+					if(!gameManager.getPeers().contains(peer)) {
 						System.out.println(apelide + " entrou!");
 						gameManager.getPeers().add(peer);
 					}
 					gameManager.setPrivateAddress(peer.getIp());
-					gameManager.sendFormatedMessage(0);
+					gameManager.sendFormatedMessage(1);
 				}
 				
 				else if(message.matches("LEAVE \\[(.+)\\]")) {
@@ -63,13 +63,13 @@ public class UDPListeningThread extends Thread {
 					String apelide = matcher.group(1);
 					System.out.println(apelide + " pediu para ver os players. Respondendo... ");
 					this.gameManager.setPrivateAddress(request.getAddress());
-					this.gameManager.sendFormatedMessage(0);
+					this.gameManager.sendFormatedMessage(2);
 				}
 				
 				else {
 					System.out.println(message);
 					System.out.println("MULTI: Mensagem recebida em formato inapropriado. Erro de protocolo");
-					String replyString ="MSG [" + gameManager.getApelide() + "] Mensagem nao processada. Erro de protocolo.";
+					String replyString ="MSG [" + gameManager.getNickname() + "] Mensagem nao processada. Erro de protocolo.";
 					byte[] replyBytes = replyString.getBytes();
 					DatagramPacket reply = new DatagramPacket(replyBytes, replyBytes.length, request.getAddress(), request.getPort());
 					this.udpSocket.send(reply);

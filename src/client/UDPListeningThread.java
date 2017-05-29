@@ -30,7 +30,7 @@ public class UDPListeningThread extends Thread {
 					
 				}
 				
-				else if(message.matches("PLAYERS \\[(.+)\\] (.*)")) {
+				else if(message.matches("PLAYERS \\[(.+)\\]")) {
 					String namePlayers = this.chatManager.extractLocaleInformation("FILES \\[(.+)\\]", message, 1);
 					String[] namePlayersArray = namePlayers.split("(, )");
 					int i;
@@ -38,6 +38,15 @@ public class UDPListeningThread extends Thread {
 						this.chatManager.getPeers().add(new Peer(namePlayersArray[i]));
 						System.out.println("Player " + i + ": " + namePlayersArray[i]);
 					}
+				}
+				
+				else {
+					System.out.println(message);
+					System.out.println("MULTI: Mensagem recebida em formato inapropriado. Erro de protocolo");
+					String replyString ="MSG [" + chatManager.getApelide() + "] Mensagem nao processada. Erro de protocolo.";
+					byte[] replyBytes = replyString.getBytes();
+					DatagramPacket reply = new DatagramPacket(replyBytes, replyBytes.length, request.getAddress(), request.getPort());
+					this.udpSocket.send(reply);
 				}
 				
 			}

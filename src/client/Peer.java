@@ -1,7 +1,5 @@
 package client;
 
-import java.net.InetAddress;
-
 public class Peer {
 	private String apelide = null;
 	
@@ -15,5 +13,10 @@ public class Peer {
 
 	public void setApelide(String apelide) {
 		this.apelide = apelide;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		return this.apelide.equals(((Peer) o).getApelide());
 	}
 }

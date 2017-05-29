@@ -9,9 +9,12 @@ public class MainClient {
 	public static void main(String[] args) {
 		
 		System.out.println("Informe seu apelido: ");
-		String apelide = scanner.nextLine();
+		String nickname = scanner.nextLine();
 		
-		ChatManager chatManager = new ChatManager(apelide, 6799, 6789);
+		System.out.println("Informe o endereco do servidor: ");
+		String privateAdress = scanner.nextLine();
+		
+		ChatManager chatManager = new ChatManager(nickname, 6799, 6789, privateAdress);
 		chatManager.initialize();
 		
 		do {
