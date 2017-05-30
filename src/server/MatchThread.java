@@ -6,6 +6,7 @@ public class MatchThread extends Thread {
 	private Match currentMatch;
 	private String oponent;
 	private LadiesInterface ladies;
+	private String onTime;
 	
 	public MatchThread(GameManager gameManager) {
 		this.gameManager = gameManager;
@@ -24,7 +25,11 @@ public class MatchThread extends Thread {
 	}
 
 	private void setOnTime(String nickname) {
-		
+		this.onTime = nickname;
+	}
+
+	public String getOnTime() {
+		return onTime;
 	}
 
 	private void notifyOponents() {
@@ -51,6 +56,7 @@ public class MatchThread extends Thread {
 
 	public void setLadies(LadiesInterface ladies) {
 		this.ladies = ladies;
+		System.out.println("Server ready ...");
 	}
 
 }

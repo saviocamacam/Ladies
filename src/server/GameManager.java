@@ -161,7 +161,7 @@ public class GameManager {
 		this.matchRunning = new MatchThread(this);
 		Match match = new Match(peers.get(0), peers.get(0));
 		this.matchRunning.setCurrentMatch(match);
-		this.matchRunning.start();
+		//this.matchRunning.start();
 	}
 
 }

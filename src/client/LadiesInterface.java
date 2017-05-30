@@ -8,10 +8,14 @@ package client;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.LinkedList;
 
 public interface LadiesInterface  extends Remote{
-	int[][] board = {};
 	
-	public int movimentaPeca (int piece, int sourceY, int sourceX) throws RemoteException;
+	public int movimentaPeca (String nickname, int piece, int sourceY, int sourceX) throws RemoteException;
+	
+	public LinkedList<Integer> getPiecesPlayer1();
+	
+	public LinkedList<Integer> getPiecesPlayer2();
 	
 }

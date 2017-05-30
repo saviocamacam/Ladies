@@ -19,15 +19,13 @@ public class MainServer {
         }
 		
 		try {
-			LadiesInterface ladies = new Ladies();
+			LadiesInterface ladies = new Ladies(gameManager.getMatchRunning());
 			
 			Registry registry = LocateRegistry.getRegistry("localhost");
 			registry.bind("LadiesService", ladies);
 			
 			gameManager.getMatchRunning().setLadies(ladies);
-
-			System.out.println("Server ready ...");
-
+			gameManager.getMatchRunning().start();
 			
 		} catch (RemoteException e) {
 			e.printStackTrace();

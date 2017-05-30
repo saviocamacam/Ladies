@@ -74,7 +74,7 @@ public class ChatManager {
 				int sourceX = Integer.valueOf(moveCommands[1]);
 				int sourceY = Integer.valueOf(moveCommands[0]);
 				try {
-					this.ladies.movimentaPeca(piece, sourceX, sourceY);
+					this.ladies.movimentaPeca(this.nickname, piece, sourceX, sourceY);
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
