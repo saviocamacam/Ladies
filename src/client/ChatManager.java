@@ -33,6 +33,7 @@ public class ChatManager {
 	private LinkedList<Peer> peers = null;
 	private boolean statusChat = false;
 	private LadiesInterface ladies;
+	private InetAddress serverAddress;
 	
 	public ChatManager(String apelide, int udpPort, int tcpPort, String privateAddress) {
 		this.nickname = apelide;
@@ -40,7 +41,8 @@ public class ChatManager {
 		this.peers = new LinkedList<>();
 		
 		try {
-			this.privateAddress = InetAddress.getByName(privateAddress);
+			this.serverAddress = InetAddress.getByName(privateAddress);
+			this.privateAddress = serverAddress;
 			udpSocket = new DatagramSocket(udpPort);
 		} catch (SocketException e) {
 			e.printStackTrace();

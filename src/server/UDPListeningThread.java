@@ -25,7 +25,9 @@ public class UDPListeningThread extends Thread {
 			
 		try {
 			while(gameManager.getStatusGame()) {
+				System.out.print("Waiting...");
 				this.udpSocket.receive(request);
+				System.out.print("Message received");
 				
 				message = new String(request.getData(), request.getOffset(), request.getLength());
 				
