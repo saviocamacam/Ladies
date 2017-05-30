@@ -21,7 +21,6 @@ public class GameManager {
 	private byte[] messageBytes;
 	private DatagramPacket request;
 	private LinkedList<Match> onlineMatches;
-	private Match currentMatch;
 	private MatchThread matchRunning;
 	
 	public GameManager(String nickname, int udpPort) {
@@ -29,9 +28,6 @@ public class GameManager {
 		this.nickname = nickname;
 		this.peers = new LinkedList<>();
 		this.setOnlineMatches(new LinkedList<>());
-		currentMatch = new Match();
-		
-		setMatchRunning(new MatchThread(this, currentMatch));
 		
 		try {
 			this.udpSocket = new DatagramSocket(udpPort);
@@ -58,23 +54,11 @@ public class GameManager {
 				formatedMessage = "JOINACK [" + nickname + "]";
 				break;
 			case 2: 
-				formatedMessage = "PLAYERS [";
-				int i;
-				LinkedList<Peer> freePlayers  = getFreePlayers();
-				for(i = 0; i < freePlayers.size()-1 ; i++) {
-					formatedMessage = formatedMessage.concat(freePlayers.get(i).getNickname() + ", ");
-				}
-				formatedMessage = formatedMessage.concat(freePlayers.get(i).getNickname());
-				formatedMessage = formatedMessage.concat("]");
+				formatedMessage = "MATCH [" + getMatchRunning().getOponent() + "]";
 				break;
 			case 3:
-				formatedMessage = "INVITE RECEIVED[]";
+				formatedMessage = "DENIED [" + nickname + "]";
 				break;
-			case 4:
-				formatedMessage = "MATCH FAILED[]";
-				break;
-				
-			default: formatedMessage = "Vish, deu merda aqui. Foi mal, aqui é o " + nickname;
 		}
 		
 		messageBytes = formatedMessage.getBytes();
@@ -110,16 +94,6 @@ public class GameManager {
 
 	public void setStatusGame(boolean b) {
 		this.statusGame = b;
-	}
-
-
-	public Match getCurrentMatch() {
-		return currentMatch;
-	}
-
-
-	public void setCurrentMatch(Match currentMatch) {
-		this.currentMatch = currentMatch;
 	}
 
 
@@ -180,6 +154,14 @@ public class GameManager {
 
 	public void setMatchRunning(MatchThread matchRunning) {
 		this.matchRunning = matchRunning;
+	}
+
+
+	public void startMatch() {
+		this.matchRunning = new MatchThread(this);
+		Match match = new Match(peers.get(0), peers.get(0));
+		this.matchRunning.setCurrentMatch(match);
+		this.matchRunning.start();
 	}
 
 }

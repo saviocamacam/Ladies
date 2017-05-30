@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class ChatManager {
 	
 	private String nickname;
-	public String getApelide() {
+	public String getNickname() {
 		return nickname;
 	}
 
@@ -32,7 +32,7 @@ public class ChatManager {
 	private client.UDPListeningThread udpThread;
 	private LinkedList<Peer> peers = null;
 	private boolean statusChat = false;
-	private LadiesInterface c;
+	private LadiesInterface ladies;
 	
 	public ChatManager(String apelide, int udpPort, int tcpPort, String privateAddress) {
 		this.nickname = apelide;
@@ -67,14 +67,14 @@ public class ChatManager {
 		
 		else if(command.matches("move piece ([0-9][0-9], ?[0-9], ?[0-9])")) {
 			
-			if(c != null) {
+			if(ladies != null) {
 				String commandExtracted = this.extractLocaleInformation("movimentar peça ([0-9][0-9], ?[0-9], ?[0-9])", command, 1);
 				String[] moveCommands = commandExtracted.split("(, )");
 				int piece = Integer.valueOf(moveCommands[0]);
 				int sourceX = Integer.valueOf(moveCommands[1]);
 				int sourceY = Integer.valueOf(moveCommands[0]);
 				try {
-					this.c.movimentaPeca(sourceX, sourceY);
+					this.ladies.movimentaPeca(piece, sourceX, sourceY);
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
@@ -115,18 +115,17 @@ public class ChatManager {
 		return statusChat;
 	}
 
-	public void matchInitialized(String apelide) {
+	public void matchInitialized(String nickname) {
 		try {
-            System.out.println ("Cliente iniciado ...");
+            System.out.println ("Client started ...");
 
             if (System.getSecurityManager() == null) {
                System.setSecurityManager(new SecurityManager());
             }
 
             Registry registry = LocateRegistry.getRegistry("localhost");
-            c = (LadiesInterface)registry.lookup("ServicoCalculadora");
-
- 			System.out.println("20+4=" + c.movimentaPeca(20, 4));
+            ladies = (LadiesInterface)registry.lookup("LadiesService");
+            
         } catch (Exception e) {
            System.out.println(e);
         }

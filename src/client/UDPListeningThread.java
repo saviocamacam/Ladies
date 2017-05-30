@@ -32,29 +32,39 @@ public class UDPListeningThread extends Thread {
 					
 				}
 				
-				else if(message.matches("PLAYERS \\[(.+)\\]")) {
-					String namePlayers = this.chatManager.extractLocaleInformation("PLAYERS \\[(.+)\\]", message, 1);
-					String[] namePlayersArray = namePlayers.split("(, )");
-					int i;
-					for(i = 0 ; i < namePlayersArray.length ; i++) {
-						this.chatManager.getPeers().add(new Peer(namePlayersArray[i]));
-						System.out.println("Player " + i + ": " + namePlayersArray[i]);
-					}
-				}
-				
-				else if(message.matches("GAME READY \\[(.+)\\]")) {
-					Pattern pattern = Pattern.compile("GET PLAYERS \\[(.+)\\]");
+				else if(message.matches("MATCH \\[(.+)\\]")) {
+					Pattern pattern = Pattern.compile("MATCH \\[(.+)\\]");
 					Matcher matcher = pattern.matcher(message);
 					matcher.find();
 					
-					String apelide = matcher.group(1);
-					chatManager.matchInitialized(apelide);
+					String nickname = matcher.group(1);
+					chatManager.matchInitialized(nickname);
+				}
+				
+				else if(message.matches("DENIED \\[(.+)\\]")) {
+					Pattern pattern = Pattern.compile("DENIED \\[(.+)\\]");
+					Matcher matcher = pattern.matcher(message);
+					matcher.find();
+					
+					String server = matcher.group(1);
+					System.out.println(server + " denied your request!");
+				}
+				
+				else if(message.matches("MSG \\[(.+)\\] (.*)")) {
+					Pattern pattern = Pattern.compile("MSG \\[(.+)\\] (.*)");
+					Matcher matcher = pattern.matcher(message);
+					matcher.find();
+					
+					String nickname = matcher.group(1);
+					String message2 = matcher.group(2);
+					
+					System.out.println(nickname + " diz: " + message2);
 				}
 				
 				else {
 					System.out.println(message);
-					System.out.println("MULTI: Mensagem recebida em formato inapropriado. Erro de protocolo");
-					String replyString ="MSG [" + chatManager.getApelide() + "] Mensagem nao processada. Erro de protocolo.";
+					System.out.println("MULTI: Message received in a improper format. Protocol Error!");
+					String replyString ="MSG [" + chatManager.getNickname() + "] Unprocessed message. Protocol Error.";
 					byte[] replyBytes = replyString.getBytes();
 					DatagramPacket reply = new DatagramPacket(replyBytes, replyBytes.length, request.getAddress(), request.getPort());
 					this.udpSocket.send(reply);

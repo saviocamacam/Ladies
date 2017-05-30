@@ -23,6 +23,8 @@ public class MainServer {
 			
 			Registry registry = LocateRegistry.getRegistry("localhost");
 			registry.bind("LadiesService", ladies);
+			
+			gameManager.getMatchRunning().setLadies(ladies);
 
 			System.out.println("Server ready ...");
 

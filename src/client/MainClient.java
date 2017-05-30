@@ -18,6 +18,7 @@ public class MainClient {
 		chatManager.initialize();
 		
 		do {
+			System.out.println("O que devo fazer?");
 			scanner = new Scanner(System.in);
 			command = scanner.nextLine();
 			chatManager.executeCommand(command);

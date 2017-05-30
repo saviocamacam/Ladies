@@ -3,7 +3,6 @@ package server;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,23 +34,26 @@ public class UDPListeningThread extends Thread {
 					Matcher matcher = pattern.matcher(message);
 					matcher.find();
 					
-					String apelide = matcher.group(1);
-					Peer peer = new Peer(request.getAddress(), apelide);
+					String nickname = matcher.group(1);
+					gameManager.setPrivateAddress(request.getAddress());
 					
-					if(!gameManager.getPeers().contains(peer)) {
-						System.out.println(apelide + " entrou!");
-						gameManager.getPeers().add(peer);
+					if(gameManager.getPeers().size() <= 2) {
+						Peer peer = new Peer(request.getAddress(), nickname);
 						
-						if(gameManager.getCurrentMatch().getPlayer1() == null) {
-							gameManager.getCurrentMatch().setPlayer1(peer);
+						if(!gameManager.getPeers().contains(peer)) {
+							System.out.println(nickname + " entrou!");
+							gameManager.getPeers().add(peer);
+							
+							if(gameManager.getPeers().size() <= 2) {
+								gameManager.startMatch();
+							}
+							gameManager.sendFormatedMessage(1);
 						}
-						else if(gameManager.getCurrentMatch().getPlayer2() == null) {
-							gameManager.getCurrentMatch().setPlayer2(peer);
-							gameManager.getMatchRunning().start();
-						}
+						else
+							gameManager.sendFormatedMessage(3);
 					}
-					gameManager.setPrivateAddress(peer.getIp());
-					gameManager.sendFormatedMessage(1);
+					else
+						gameManager.sendFormatedMessage(3);
 				}
 				
 				else if(message.matches("LEAVE \\[(.+)\\]")) {
@@ -65,80 +67,25 @@ public class UDPListeningThread extends Thread {
 					gameManager.getPeers().remove(peer);
 				}
 				
-				else if(message.matches("GET PLAYERS \\[(.+)\\]")) {
-					Pattern pattern = Pattern.compile("GET PLAYERS \\[(.+)\\]");
+				else if(message.matches("MSG \\[(.+)\\] (.*)")) {
+					Pattern pattern = Pattern.compile("MSG \\[(.+)\\] (.*)");
 					Matcher matcher = pattern.matcher(message);
 					matcher.find();
 					
-					String apelide = matcher.group(1);
-					System.out.println(apelide + " pediu para ver os players. Respondendo... ");
-					this.gameManager.setPrivateAddress(request.getAddress());
-					this.gameManager.sendFormatedMessage(2);
+					String nickname = matcher.group(1);
+					String message2 = matcher.group(2);
+					
+					System.out.println(nickname + " diz: " + message2);
 				}
-				
-				else if(message.matches("PLAY \\[(.+)\\]")) {
-					String namePlayers = this.gameManager.extractLocaleInformation("PLAY \\[(.+)\\]", message, 1);
-					String[] namePlayersArray = namePlayers.split("(, )");
-					
-					int index = gameManager.getPeers().indexOf(new Peer(namePlayersArray[0]));
-					Peer invitingPeer = gameManager.getPeers().get(index);
-					
-					if(gameManager.getPeers().contains(new Peer(namePlayersArray[1]))) {
-						
-						index = gameManager.getPeers().indexOf(new Peer(namePlayersArray[1]));
-						Peer invitedPeer = gameManager.getPeers().get(index);
-						
-						Match match = new Match(invitingPeer, invitedPeer);
-						
-						match.setStatus("convite");
-						
-						gameManager.getOnlineMatches().add(match);
-						gameManager.setPrivateAddress(invitedPeer.getIp());
-						gameManager.sendFormatedMessage(3);
-					} 
-					
-					else {
-						gameManager.setPrivateAddress(invitingPeer.getIp());
-						gameManager.sendFormatedMessage(4);
-					}
-					
-				}
-				
-				else if(message.matches("INVITATION RESPONSE \\[(.+)\\]")) {
-					String namePlayers = this.gameManager.extractLocaleInformation("INVITATION RESPONSE \\[(.+)\\]", message, 1);
-					String[] namePlayersArray = namePlayers.split("(, )");
-					
-					int index = gameManager.getPeers().indexOf(new Peer(namePlayersArray[0]));
-					Peer invitingPeer = gameManager.getPeers().get(index);
-					
-					index = gameManager.getPeers().indexOf(new Peer(namePlayersArray[1]));
-					Peer invitedPeer = gameManager.getPeers().get(index);
-					
-					Match match = new Match(invitingPeer, invitedPeer);
-					
-					String response = namePlayersArray[2];
-					
-					if(response.matches("ACCEPTED")) {
-						int indexMatch = gameManager.getOnlineMatches().indexOf(match);
-						gameManager.getOnlineMatches().get(indexMatch).setStatus("accepted");
-						
-					}
-					else if(response.matches("DENIED")) {
-						
-					}
-				}
-				
-				
 				
 				else {
 					System.out.println(message);
-					System.out.println("MULTI: Mensagem recebida em formato inapropriado. Erro de protocolo");
-					String replyString ="MSG [" + gameManager.getNickname() + "] Mensagem nao processada. Erro de protocolo.";
+					System.out.println("MULTI: Message received in a improper format. Protocol Error!");
+					String replyString ="MSG [" + gameManager.getNickname() + "] Unprocessed message. Protocol Error.";
 					byte[] replyBytes = replyString.getBytes();
 					DatagramPacket reply = new DatagramPacket(replyBytes, replyBytes.length, request.getAddress(), request.getPort());
 					this.udpSocket.send(reply);
 				}
-				
 			}
 			
 		} catch (IOException e) {
