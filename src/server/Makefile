@@ -1,2 +1,2 @@
 all:
-	javac GameManager.java MainServer.java Peer.java UDPListeningThread.java Match.java
+	javac GameManager.java LadiesInterface.java Ladies.java MainServer.java Match.java MatchThread.java UDPListeningThread.java Peer.java

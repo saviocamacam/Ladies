@@ -25,7 +25,7 @@ public class MainServer {
 			registry.bind("LadiesService", ladies);
 			
 			gameManager.getMatchRunning().setLadies(ladies);
-			gameManager.getMatchRunning().start();
+			//gameManager.getMatchRunning().start();
 			
 		} catch (RemoteException e) {
 			e.printStackTrace();

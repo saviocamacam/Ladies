@@ -1,5 +1,7 @@
 package server;
 
+import java.rmi.RemoteException;
+
 public class MatchThread extends Thread {
 	
 	private GameManager gameManager;
@@ -18,8 +20,13 @@ public class MatchThread extends Thread {
 		this.notifyOponents();
 		this.setOnTime(currentMatch.getPlayer1().getNickname());
 		
-		while(ladies.getPiecesPlayer1().size() != 0 && ladies.getPiecesPlayer2().size() != 0) {
+		try {
+			while(ladies.getPiecesPlayer1().size() != 0 && ladies.getPiecesPlayer2().size() != 0) {
+				
+			}
 			
+		} catch (RemoteException e) {
+			e.printStackTrace();
 		}
 		
 	}

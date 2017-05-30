@@ -40,6 +40,7 @@ public class GameManager {
 
 	public void initialize() {
 		System.out.println("Abrindo Ladies");
+		this.matchRunning = new MatchThread(this);
 		this.statusGame = true;
 		udpThread = new UDPListeningThread(udpSocket, this);
 		udpThread.start();
@@ -158,10 +159,9 @@ public class GameManager {
 
 
 	public void startMatch() {
-		this.matchRunning = new MatchThread(this);
 		Match match = new Match(peers.get(0), peers.get(0));
 		this.matchRunning.setCurrentMatch(match);
-		//this.matchRunning.start();
+		this.matchRunning.start();
 	}
 
 }
