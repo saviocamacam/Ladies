@@ -29,7 +29,12 @@ public class UDPListeningThread extends Thread {
 				message = new String(request.getData(), request.getOffset(), request.getLength());
 				
 				if (message.matches("JOINACK \\[(.+)\\]")) {
+					Pattern pattern = Pattern.compile("MATCH \\[(.+)\\]");
+					Matcher matcher = pattern.matcher(message);
+					matcher.find();
 					
+					String nickname = matcher.group(1);
+					System.out.println("Connection established with " + nickname);
 				}
 				
 				else if(message.matches("MATCH \\[(.+)\\]")) {
@@ -38,6 +43,7 @@ public class UDPListeningThread extends Thread {
 					matcher.find();
 					
 					String nickname = matcher.group(1);
+					System.out.println("Match started with " + nickname);
 					chatManager.matchInitialized(nickname);
 				}
 				
