@@ -46,7 +46,7 @@ public class UDPListeningThread extends Thread {
 							System.out.println(nickname + " entrou!");
 							gameManager.getPeers().add(peer);
 							
-							if(gameManager.getPeers().size() <= 2) {
+							if(gameManager.getPeers().size() == 2) {
 								gameManager.startMatch();
 							}
 							gameManager.sendFormatedMessage(1);

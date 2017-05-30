@@ -125,7 +125,7 @@ public class ChatManager {
                System.setSecurityManager(new SecurityManager());
             }
 
-            Registry registry = LocateRegistry.getRegistry("localhost");
+            Registry registry = LocateRegistry.getRegistry("192.168.1.114");
             ladies = (LadiesInterface)registry.lookup("LadiesService");
             
         } catch (Exception e) {
