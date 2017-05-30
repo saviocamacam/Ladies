@@ -11,6 +11,10 @@ public class Match {
 		this.setPlayer2(player2);
 	}
 
+	public Match() {
+		
+	}
+
 	public Peer getPlayer1() {
 		return player1;
 	}

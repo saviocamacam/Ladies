@@ -41,6 +41,14 @@ public class UDPListeningThread extends Thread {
 					if(!gameManager.getPeers().contains(peer)) {
 						System.out.println(apelide + " entrou!");
 						gameManager.getPeers().add(peer);
+						
+						if(gameManager.getCurrentMatch().getPlayer1() == null) {
+							gameManager.getCurrentMatch().setPlayer1(peer);
+						}
+						else if(gameManager.getCurrentMatch().getPlayer2() == null) {
+							gameManager.getCurrentMatch().setPlayer2(peer);
+							gameManager.getMatchRunning().start();
+						}
 					}
 					gameManager.setPrivateAddress(peer.getIp());
 					gameManager.sendFormatedMessage(1);

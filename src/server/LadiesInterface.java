@@ -10,6 +10,8 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface LadiesInterface extends Remote {
+	int[][] board = {};
+	
 	public int movimentaPeca (int origemX, int origemY) throws RemoteException;
 
 }

@@ -6,6 +6,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,6 +32,7 @@ public class ChatManager {
 	private client.UDPListeningThread udpThread;
 	private LinkedList<Peer> peers = null;
 	private boolean statusChat = false;
+	private LadiesInterface c;
 	
 	public ChatManager(String apelide, int udpPort, int tcpPort, String privateAddress) {
 		this.nickname = apelide;
@@ -55,29 +59,31 @@ public class ChatManager {
 		
 		String formatedMessage = "";
 		
-		if(command.matches("conectar ladies"))
+		if(command.matches("connect ladies"))
 			formatedMessage = "JOIN [" + nickname + "]";
 			
-		 else if(command.matches("desconectar ladies"))
+		 else if(command.matches("leave ladies"))
 			formatedMessage = "LEAVE [" + nickname + "]";
 		
-		else if(command.matches("jogadores disponiveis"))
-			formatedMessage = "GET PLAYERS [" + nickname + "]";
-		
-		else if(command.matches("jogar com (.*)")) {
-			Pattern pattern = Pattern.compile("jogar com (.*)");
-			Matcher matcher = pattern.matcher(command);
-			matcher.find();
-			String nickname = matcher.group(1);
-			String player = "";
-			if(peers.contains(new Peer(nickname)))
-				player = nickname;
-			else{
-				System.out.print(nickname + "não está na sua lista");
-				return;
+		else if(command.matches("move piece ([0-9][0-9], ?[0-9], ?[0-9])")) {
+			
+			if(c != null) {
+				String commandExtracted = this.extractLocaleInformation("movimentar peça ([0-9][0-9], ?[0-9], ?[0-9])", command, 1);
+				String[] moveCommands = commandExtracted.split("(, )");
+				int piece = Integer.valueOf(moveCommands[0]);
+				int sourceX = Integer.valueOf(moveCommands[1]);
+				int sourceY = Integer.valueOf(moveCommands[0]);
+				try {
+					this.c.movimentaPeca(sourceX, sourceY);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
 			}
 			
-			formatedMessage = "PLAY [" + nickname +", " + player + "]";
+			else {
+				System.out.println("You're not in a match currently! Try again later.");
+			}
+			
 		}
 		
 		messageBytes = formatedMessage.getBytes();
@@ -107,6 +113,23 @@ public class ChatManager {
 
 	public boolean getStatusChat() {
 		return statusChat;
+	}
+
+	public void matchInitialized(String apelide) {
+		try {
+            System.out.println ("Cliente iniciado ...");
+
+            if (System.getSecurityManager() == null) {
+               System.setSecurityManager(new SecurityManager());
+            }
+
+            Registry registry = LocateRegistry.getRegistry("localhost");
+            c = (LadiesInterface)registry.lookup("ServicoCalculadora");
+
+ 			System.out.println("20+4=" + c.movimentaPeca(20, 4));
+        } catch (Exception e) {
+           System.out.println(e);
+        }
 	}
 
 }

@@ -21,12 +21,17 @@ public class GameManager {
 	private byte[] messageBytes;
 	private DatagramPacket request;
 	private LinkedList<Match> onlineMatches;
+	private Match currentMatch;
+	private MatchThread matchRunning;
 	
 	public GameManager(String nickname, int udpPort) {
 		this.udpPort = udpPort;
 		this.nickname = nickname;
 		this.peers = new LinkedList<>();
 		this.setOnlineMatches(new LinkedList<>());
+		currentMatch = new Match();
+		
+		setMatchRunning(new MatchThread(this, currentMatch));
 		
 		try {
 			this.udpSocket = new DatagramSocket(udpPort);
@@ -108,6 +113,16 @@ public class GameManager {
 	}
 
 
+	public Match getCurrentMatch() {
+		return currentMatch;
+	}
+
+
+	public void setCurrentMatch(Match currentMatch) {
+		this.currentMatch = currentMatch;
+	}
+
+
 	public int getUdpPort() {
 		return udpPort;
 	}
@@ -155,6 +170,16 @@ public class GameManager {
 
 	public DatagramSocket getUdpSocket() {
 		return udpSocket;
+	}
+
+
+	public MatchThread getMatchRunning() {
+		return matchRunning;
+	}
+
+
+	public void setMatchRunning(MatchThread matchRunning) {
+		this.matchRunning = matchRunning;
 	}
 
 }

@@ -4,7 +4,9 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 public class Ladies extends UnicastRemoteObject implements LadiesInterface  {
-
+	
+	int[][] board;
+	
 	public Ladies() throws RemoteException {
 		super();
         System.out.println("Objeto remoto instanciado");

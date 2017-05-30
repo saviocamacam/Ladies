@@ -3,6 +3,8 @@ package client;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UDPListeningThread extends Thread {
 
@@ -38,6 +40,15 @@ public class UDPListeningThread extends Thread {
 						this.chatManager.getPeers().add(new Peer(namePlayersArray[i]));
 						System.out.println("Player " + i + ": " + namePlayersArray[i]);
 					}
+				}
+				
+				else if(message.matches("GAME READY \\[(.+)\\]")) {
+					Pattern pattern = Pattern.compile("GET PLAYERS \\[(.+)\\]");
+					Matcher matcher = pattern.matcher(message);
+					matcher.find();
+					
+					String apelide = matcher.group(1);
+					chatManager.matchInitialized(apelide);
 				}
 				
 				else {
