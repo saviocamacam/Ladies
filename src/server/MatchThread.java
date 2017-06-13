@@ -40,10 +40,12 @@ public class MatchThread extends Thread {
 	}
 
 	private void notifyOponents() {
+		System.out.println("IP1: " + currentMatch.getPlayer1().getIp());
 		gameManager.setPrivateAddress(currentMatch.getPlayer1().getIp());
 		this.oponent = currentMatch.getPlayer2().getNickname();
 		gameManager.sendFormatedMessage(2);
 		
+		System.out.println("IP2: " + currentMatch.getPlayer2().getIp());
 		gameManager.setPrivateAddress(currentMatch.getPlayer2().getIp());
 		this.oponent = currentMatch.getPlayer1().getNickname();
 		gameManager.sendFormatedMessage(2);

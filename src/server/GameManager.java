@@ -159,7 +159,7 @@ public class GameManager {
 
 
 	public void startMatch() {
-		Match match = new Match(peers.get(0), peers.get(0));
+		Match match = new Match(peers.get(0), peers.get(1));
 		this.matchRunning.setCurrentMatch(match);
 		this.matchRunning.start();
 	}
